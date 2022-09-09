@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "include": ["src"],
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "target": "ES2021",
+    "charset": "utf8",
+    "newLine": "LF",
+    "assumeChangesOnlyAffectDirectDependencies": true,
+    "declaration": true,
+    "exactOptionalPropertyTypes": true,
+    "esModuleInterop": true,
+    "checkJs": false,
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "pretty": true,
+    "importHelpers": false,
+    "incremental": true,
+    "composite": true,
+    "rootDir": "./src",
+    "module": "commonjs",
+    "outDir": "./build"
+  }
+}

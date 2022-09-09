@@ -1,0 +1,36 @@
+{
+  "name": "css-modules-to-tailwind",
+  "version": "1.0.0",
+  "description": "",
+  "contributors": [
+    "SSSS"
+  ],
+  "files": [
+    "build"
+  ],
+  "main": "build/index.js",
+  "bin": "./bin/index.js",
+  "module": "build/index.js",
+  "scripts": {
+    "build": "rm -rf build && tsc -b ./tsconfig.json",
+    "build:w": "tsc -b ./tsconfig.json -w",
+    "test": "jest -c ./__tests__/jest.config.mjs",
+    "start": "jest -c ./__tests__/jest.config.mjs --watchAll --runInBand"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "28.1.4",
+    "@types/node": "^16",
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/parser": "^5.36.2",
+    "eslint": "^8.23.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "28.1.2",
+    "jest-watch-typeahead": "1.1.0",
+    "node-notifier": "^10.0.1",
+    "prettier": "^2.7.1",
+    "ts-jest": "28.0.5",
+    "typescript": "^4.8.2"
+  }
+}
