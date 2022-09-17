@@ -74,7 +74,7 @@ Or use directly:
   npx css-modules-to-tailwind src/index.tsx
   ```
 
-Tool will change your git directory is clean, you can use '--force' to skip the check.
+Tool will check your git directory is clean, you can use '--force' to skip the check.
 
 When you're done, in your index.tsx:
 
