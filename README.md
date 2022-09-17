@@ -16,7 +16,7 @@ This is a tool to convert css-modules to tailwind-css
   - [CSS Modules](https://github.com/css-modules/css-modules)
   - [Tailwind CSS](https://tailwindcss.com/)
 
-## How It Works
+## How it works
 
 It uses [jscodeshift](https://github.com/facebook/jscodeshift) and [postcss](https://github.com/postcss/postcss).
 
@@ -170,9 +170,9 @@ It just becomes:
 
 I think you should use `composes`.
 
-## Inappropriate Scenes
+## Inappropriate scenes
 
-### Unreasonable Nesting
+### Unreasonable nesting
 
 ```tsx
 import style form 'index.module.css';
