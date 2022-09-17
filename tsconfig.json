@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["src"],
+  "include": ["src", "src/**/*.json"],
   "compilerOptions": {
     "strict": true,
     "skipLibCheck": true,
@@ -22,6 +22,7 @@
     "composite": true,
     "rootDir": "./src",
     "module": "commonjs",
-    "outDir": "./build"
+    "outDir": "./build",
+    "tsBuildInfoFile": "./build/.tsbuildinfo"
   }
 }
