@@ -72,6 +72,7 @@ Or use directly:
 
   ```shell
   npx css-modules-to-tailwind src/index.tsx
+  // npx css-modules-to-tailwind src/**/*.tsx
   ```
 
 Tool will check your git directory is clean, you can use '--force' to skip the check.
