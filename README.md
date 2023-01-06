@@ -8,7 +8,7 @@ This is a tool to convert css-modules to tailwind-css
 <p>
     <a href="https://www.npmjs.com/package/css-modules-to-tailwind"><img src="https://img.shields.io/npm/dm/css-modules-to-tailwind?style=flat-square" alt="Total Downloads"></a>
     <a href="https://www.npmjs.com/package/css-modules-to-tailwind"><img src="https://img.shields.io/bundlephobia/minzip/css-modules-to-tailwind?style=flat-square" alt="Latest Release"></a>
-    <a href="https://github.com/shiyangzhaoa/css-modules-to-tailwind/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/image-editor-little?style=flat-square" alt="License"></a>
+    <a href="https://github.com/shiyangzhaoa/css-modules-to-tailwind/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/css-modules-to-tailwind?style=flat-square" alt="License"></a>
 </p>
 
 ## About
