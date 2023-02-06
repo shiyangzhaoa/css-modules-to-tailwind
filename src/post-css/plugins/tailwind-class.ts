@@ -176,7 +176,7 @@ const transformRule = (
       }
     });
     const { tailwind: applyListStr, useful } = getTailwindBy(singleRule);
-    const applyList = decls.filter(node => !useful[node.prop]);
+    const applyList = decls.filter(node => !useful[processProps(node.prop, node.value)]);
 
     let isUnnecessarySplit = isParentUnnecessarySplit;
     if (isUnnecessarySplit === false) {
