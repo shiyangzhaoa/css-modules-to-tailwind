@@ -56,9 +56,7 @@ export const getTailwindMap = async (
         map[key] = classList[i];
       });
     } catch (err) {
-      (err as Error[]).forEach((err) => {
-        error((err as Error).message);
-      });
+      error((err as Error).message);
     }
   }
 

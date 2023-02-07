@@ -1,6 +1,6 @@
 {
   "name": "css-modules-to-tailwind",
-  "version": "0.1.2",
+  "version": "0.1.6",
   "description": "tailwind css convert tool",
   "contributors": [
     "shiyangzhaoa"
@@ -11,6 +11,8 @@
   "main": "build/index.js",
   "bin": "./bin/index.js",
   "module": "build/index.js",
+  "repository": "https://github.com/shiyangzhaoa/css-modules-to-tailwind.git",
+  "bugs": "https://github.com/shiyangzhaoa/css-modules-to-tailwind/issues",
   "scripts": {
     "build": "rm -rf build && tsc -b ./tsconfig.json",
     "build:w": "tsc -b ./tsconfig.json -w",

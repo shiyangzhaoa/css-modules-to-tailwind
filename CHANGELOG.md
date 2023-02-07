@@ -19,3 +19,28 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Fix the bug that the background is deleted
+
+## 0.1.3
+
+### Fixed
+
+- Remove console.log
+
+## 0.1.4
+
+### Fixed
+
+- Fix error message log
+- Fix nodes optional
+
+## 0.1.5
+
+### Fixed
+
+- Parse tsconfig by JSON5
+
+## 0.1.6
+
+### Fixed
+
+- Fix tsconfig alias

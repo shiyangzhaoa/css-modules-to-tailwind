@@ -51,7 +51,7 @@ export const tailwindPluginCreator: (cacheKey: string) => Plugin = (
     void (function reduceRules(node: Root | Rule | AtRule, isAtRule = false) {
       const nodes = node.nodes;
 
-      nodes.forEach((node) => {
+      nodes?.forEach((node) => {
         switch (node.type) {
           case 'atrule':
             reduceRules(node, true);

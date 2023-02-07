@@ -87,7 +87,7 @@ const tryRemovePrefix = (str: string, prefix: string) => {
 };
 
 const tsconfigPath = findUp.sync('tsconfig.json');
-const options = tsconfigPath && JSON.parse(fs.readFileSync(tsconfigPath, 'utf-8')).compilerOptions;
+const options = tsconfigPath && JSON5.parse(fs.readFileSync(tsconfigPath, 'utf-8')).compilerOptions;
 export const completeEntriesFromPath = (fragment: string) => {
   try {
     if (options?.paths) {
@@ -111,7 +111,7 @@ export const completeEntriesFromPath = (fragment: string) => {
               const remainingFragment = tryRemovePrefix(fragment, pathPrefix);
               pathResults = `${parsed.prefix}${remainingFragment}`;
           }
-          if (typeof pathPattern === "string" || key === fragment) {
+          if (typeof pathPattern === "string" && key === fragment) {
             pathResults = patterns[0];
           }
         }
@@ -127,6 +127,10 @@ export const completeEntriesFromPath = (fragment: string) => {
 
 export const getCompletionEntries = (pathDir: string) => (fragment: string) => {
   const completionEntries = completeEntriesFromPath(fragment);
+
+  if (tsconfigPath && completionEntries) {
+    return path.resolve(path.dirname(tsconfigPath), completionEntries);
+  }
 
   return path.resolve(pathDir, completionEntries || fragment);
 };
