@@ -12,7 +12,7 @@ This is a tool to convert css-modules to tailwind-css
 </p>
 
 ## Support list
-- [x] tsconfig.json alias support, like `alias/someComponents/index.module.css`
+- [x] tsconfig.json alias support, like `alias/someComponent/index.module.css`
 - [x] css file circular reference
 - [ ] pseudo-classes support
 
