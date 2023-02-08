@@ -11,6 +11,12 @@ This is a tool to convert css-modules to tailwind-css
     <a href="https://github.com/shiyangzhaoa/css-modules-to-tailwind/blob/main/LICENSE"><img src="https://shields.io/github/license/shiyangzhaoa/css-modules-to-tailwind?style=flat-square" alt="License"></a>
 </p>
 
+## Support list
+- [x] tsconfig.json alias support, like `alias/component/index.module.css`
+- [x] css file circular reference
+- [x] project level support, just run this command: `npx css-modules-to-tailwind src/**/*.tsx`
+- [ ] pseudo-classes support
+
 ## About
 
   - [CSS Modules](https://github.com/css-modules/css-modules)
