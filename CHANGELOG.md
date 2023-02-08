@@ -44,3 +44,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Fix tsconfig alias
+
+## 0.1.7
+
+### Fixed
+
+- Fix import decls should not be removed

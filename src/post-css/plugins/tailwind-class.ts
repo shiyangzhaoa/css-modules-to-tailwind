@@ -176,7 +176,7 @@ const transformRule = (
       }
     });
     const { tailwind: applyListStr, useful } = getTailwindBy(singleRule);
-    const applyList = decls.filter(node => !useful[processProps(node.prop, node.value)]);
+    const applyList = decls.filter(node => !useful[processProps(node.prop, node.value)] && !node.important);
 
     let isUnnecessarySplit = isParentUnnecessarySplit;
     if (isUnnecessarySplit === false) {
@@ -220,7 +220,7 @@ const transformRule = (
           ...new Set([...atRules.params.split(/\s+/), ...applyListStr]),
         ];
         atRules.params = validApply.join(' ');
-      } else {
+      } else if (applyListStr.length !== 0) {
         const applyDecl = new AtRule({
           name: 'apply',
           params: applyListStr.join(' '),
@@ -295,7 +295,7 @@ async function convertComposes(decl: Declaration) {
         ];
 
         atRules.params = validApply.join(' ');
-      } else {
+      } else if (applyList.length !== 0) {
         const applyDecl = new AtRule({
           name: 'apply',
           params: applyList.join(' '),

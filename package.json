@@ -1,6 +1,6 @@
 {
   "name": "css-modules-to-tailwind",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "tailwind css convert tool",
   "contributors": [
     "shiyangzhaoa"
@@ -8,6 +8,7 @@
   "files": [
     "build"
   ],
+  "license": "MIT",
   "main": "build/index.js",
   "bin": "./bin/index.js",
   "module": "build/index.js",
