@@ -50,3 +50,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Fix import decls should not be removed
+
+## 0.1.8
+
+### Fixed
+
+- Import namespace specifier support

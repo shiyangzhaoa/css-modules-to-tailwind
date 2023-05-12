@@ -31,22 +31,28 @@ export const getTailwindMap = async (
     cssImportSpecifiers.forEach((path) => {
       const importDecl = j(path);
 
+      // import style from 'index.module.css';
       const importDefaultSpecifiers = importDecl
         .find(j.ImportDefaultSpecifier)
         .find(j.Identifier);
-      const importDefaultNodes = importDefaultSpecifiers.nodes();
+      // import * as style from 'index.module.css';
+      const importNamespaceSpecifiers = importDecl
+        .find(j.ImportNamespaceSpecifier)
+        .find(j.Identifier);
+        
+      const importCSSNodes = [...importDefaultSpecifiers.nodes(), ...importNamespaceSpecifiers.nodes()];
 
-      if (importDefaultNodes.length === 0) return;
+      if (importCSSNodes.length === 0) return;
 
-      const importDefaultNode = importDefaultNodes[0];
-      const importDefaultName = importDefaultNode.name;
+      const importCSSNode = importCSSNodes[0];
+      const importCSSName = importCSSNode.name;
 
       const sourcePath = importDecl.find(j.Literal).get().node;
       const cssSourcePath = sourcePath.value;
       const cssPath = getCompletionEntries(dir)(cssSourcePath);
 
       promises.push({
-        key: importDefaultName,
+        key: importCSSName,
         value: cssToTailwind(cssPath),
       });
     });
