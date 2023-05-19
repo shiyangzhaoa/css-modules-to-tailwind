@@ -11,7 +11,7 @@ import type { Apply } from './context';
 
 interface TransformCreate {
   key: string;
-  value: Promise<any>;
+  value: Promise<Apply>;
 }
 
 export const getTailwindMap = async (

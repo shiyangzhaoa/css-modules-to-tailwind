@@ -56,3 +56,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Import namespace specifier support
+
+## 0.1.9
+
+### Fixed
+
+- Remove legacy className
