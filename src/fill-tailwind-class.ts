@@ -35,8 +35,9 @@ export const fillTailwindClass = (
         const classList = cache.result[validName] ?? [];
         const removed = cache.removed ?? [];
         const isRemoved = removed.includes(validName);
+        const isUnlinked = cache.isUnlinked || false;
 
-        if (classList.length === 0) {
+        if (classList.length === 0 && !isUnlinked) {
           return;
         }
 
@@ -81,6 +82,11 @@ export const fillTailwindClass = (
           }
         }
 
+        if (isUnlinked) {
+          styleMemberExpression.replace(j.literal('invalid-class'));
+
+          return;
+        }
 
         const quasis = [
           j.templateElement({ cooked: '', raw: '' }, false),

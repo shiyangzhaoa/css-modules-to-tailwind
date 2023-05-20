@@ -8,6 +8,7 @@ import type { RequestMessage, ResponseMessage } from './db-server/config';
 export type Apply = {
   result: Record<string, string[]>;
   removed: string[];
+  isUnlinked?: boolean;
 };
 
 const events = new EventEmitter();

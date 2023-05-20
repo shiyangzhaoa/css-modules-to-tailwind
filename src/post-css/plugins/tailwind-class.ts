@@ -19,7 +19,7 @@ export const tailwindPluginCreator: (cacheKey: string) => Plugin = (
   cacheKey,
 ) => ({
   postcssPlugin: 'tailwind',
-  async Root(root) {
+  async Once(root) {
     const dependencies: string[] = [];
     const polymorphisms: string[] = [];
     const map = new Map();
@@ -88,7 +88,17 @@ export const tailwindPluginCreator: (cacheKey: string) => Plugin = (
       Object.assign(result, ruleTransformResult);
     });
 
-    const removedClassnames = checkRuleValid(root.nodes);
+    const removedClassnames: string[] = [];
+
+    (function pick() {
+      const removed = checkRuleValid(root.nodes);
+
+      if (removed.length !== 0) {
+        removedClassnames.push(...removed);
+
+        pick();
+      }
+    })()
 
     await setContext(cacheKey, {
       result: result,
@@ -240,7 +250,7 @@ const checkRuleValid = (nodes: ChildNode[], result: string[] = [], isGlobalParen
   
   return [
     ...result,
-    ...nodes.reduce((acc, node) => {
+    ...[...nodes].reduce((acc, node) => {
       if (isRule(node)) {
         let className = '';
         const validNodes = node.nodes.filter((node) => node.type !== 'comment');

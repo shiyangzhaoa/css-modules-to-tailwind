@@ -5,7 +5,7 @@ import postcss from 'postcss';
 import scss from 'postcss-scss';
 import less from 'postcss-less';
 
-import { getContext } from '../context';
+import { getContext, setContext } from '../context';
 import { error, warn } from '../utils/logger';
 import { isLessModules } from '../utils/validate';
 
@@ -33,15 +33,28 @@ export const cssToTailwind = async (cssPath: string) => {
     from: 'tailwind.css',
   });
 
-  if (!result) {
-    warn(`${cssPath} content is empty`);
-  }
+  let isUnlinked = false;
 
-  fsPromises.writeFile(cssPath, result).catch((err) => {
-    error(err.message);
-  });
+  if (!result) {
+    isUnlinked = true;
+
+    fsPromises.access(cssPath).then(() => {
+      warn(`${cssPath} has been deleted`);
+      fsPromises.unlink(cssPath).catch((err) => {
+        error(err);
+      });
+    });
+  } else {
+    fsPromises.writeFile(cssPath, result).catch((err) => {
+      error(err);
+    });
+  }
 
   const context = await getContext(cssPath);
 
-  return { ...context };
+  const newContext = { ...context, isUnlinked };
+
+  await setContext(cssPath, newContext);
+
+  return newContext;
 };

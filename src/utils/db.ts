@@ -99,6 +99,7 @@ export class DB {
         json[cacheKey] = {
           result: {},
           removed: data.removed,
+          isUnlinked: data.isUnlinked || false,
         };
       }
 

@@ -12,6 +12,7 @@ import type { Apply } from './context';
 interface TransformCreate {
   key: string;
   value: Promise<Apply>;
+  importDecl: core.Collection<core.ImportDeclaration>;
 }
 
 export const getTailwindMap = async (
@@ -39,7 +40,7 @@ export const getTailwindMap = async (
       const importNamespaceSpecifiers = importDecl
         .find(j.ImportNamespaceSpecifier)
         .find(j.Identifier);
-        
+
       const importCSSNodes = [...importDefaultSpecifiers.nodes(), ...importNamespaceSpecifiers.nodes()];
 
       if (importCSSNodes.length === 0) return;
@@ -52,14 +53,20 @@ export const getTailwindMap = async (
       const cssPath = getCompletionEntries(dir)(cssSourcePath);
 
       promises.push({
+        importDecl,
         key: importCSSName,
         value: cssToTailwind(cssPath),
       });
     });
     try {
       const classList = await Promise.all(promises.map(({ value }) => value));
-      promises.forEach(({ key }, i) => {
-        map[key] = classList[i];
+      promises.forEach(({ key, importDecl }, i) => {
+        const data = classList[i];
+        map[key] = data;
+
+        if (data.isUnlinked) {
+          importDecl.remove();
+        }
       });
     } catch (err) {
       error((err as Error).message);
