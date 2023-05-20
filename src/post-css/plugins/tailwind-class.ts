@@ -94,7 +94,7 @@ export const tailwindPluginCreator: (cacheKey: string) => Plugin = (
       const removed = checkRuleValid(root.nodes);
 
       if (removed.length !== 0) {
-        removedClassnames.push(...removed);
+        removedClassnames.push(...removed.filter((item) => !polymorphisms.includes(item)));
 
         pick();
       }

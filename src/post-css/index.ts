@@ -38,12 +38,16 @@ export const cssToTailwind = async (cssPath: string) => {
   if (!result) {
     isUnlinked = true;
 
-    fsPromises.access(cssPath).then(() => {
-      warn(`${cssPath} has been deleted`);
-      fsPromises.unlink(cssPath).catch((err) => {
-        error(err);
+    fsPromises.access(cssPath)
+      .then(() => {
+        warn(`${cssPath} has been deleted`);
+        fsPromises.unlink(cssPath).catch(() => {
+          // css file has been deleted
+        });
+      })
+      .catch(() => {
+        // css file removed
       });
-    });
   } else {
     fsPromises.writeFile(cssPath, result).catch((err) => {
       error(err);
