@@ -35,7 +35,7 @@ export const cssToTailwind = async (cssPath: string) => {
 
   let isUnlinked = false;
 
-  if (!result) {
+  if (!result.replace(/^\s+|\s+$/g, '')) {
     isUnlinked = true;
 
     fsPromises.access(cssPath)
