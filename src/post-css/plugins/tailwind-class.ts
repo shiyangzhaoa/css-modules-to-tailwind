@@ -14,10 +14,11 @@ import {
 
 import type { Plugin, Declaration, Rule, Root, ChildNode } from 'postcss';
 import { isRule } from '../../utils/validate';
+import { getCompletionEntries } from '../../utils/file';
 
-export const tailwindPluginCreator: (cacheKey: string) => Plugin = (
-  cacheKey,
-) => ({
+export const tailwindPluginCreator = (
+  cssPath: string
+): Plugin => ({
   postcssPlugin: 'tailwind',
   async Once(root) {
     const dependencies: string[] = [];
@@ -100,7 +101,7 @@ export const tailwindPluginCreator: (cacheKey: string) => Plugin = (
       }
     })()
 
-    await setContext(cacheKey, {
+    await setContext(cssPath, {
       result: result,
       removed: removedClassnames,
     });
@@ -108,7 +109,7 @@ export const tailwindPluginCreator: (cacheKey: string) => Plugin = (
     const promises: (() => Promise<any>)[] = [];
     root.walkDecls((decl) => {
       if (decl.prop === 'composes') {
-        promises.push(() => convertComposes(decl));
+        promises.push(() => convertComposes(decl, cssPath));
       }
     });
 
@@ -294,7 +295,7 @@ const checkRuleValid = (nodes: ChildNode[], result: string[] = [], isGlobalParen
   ];
 };
 
-async function convertComposes(decl: Declaration) {
+async function convertComposes(decl: Declaration, cssPath: string) {
   const { value } = decl;
 
   const result = getComposesValue(value);
@@ -307,9 +308,10 @@ async function convertComposes(decl: Declaration) {
 
   const [, className, stylePath] = result;
 
-  const styleAbsolutePath = path.resolve(stylePath);
+  const cssDir = path.dirname(cssPath);
+  const realPath = getCompletionEntries(cssDir)(stylePath);
 
-  const tailWindMap = await cssToTailwind(styleAbsolutePath);
+  const tailWindMap = await cssToTailwind(realPath);
 
   if (tailWindMap && tailWindMap.result[className]) {
     const parent = decl.parent;
@@ -333,5 +335,9 @@ async function convertComposes(decl: Declaration) {
         parent.prepend(applyDecl);
       }
     }
+  }
+
+  if (tailWindMap.isUnlinked || tailWindMap.removed.includes(className)) {
+    decl.remove();
   }
 }

@@ -69,7 +69,7 @@ export const getTailwindMap = async (
         }
       });
     } catch (err) {
-      error((err as Error).message);
+      error(err as any);
     }
   }
 
