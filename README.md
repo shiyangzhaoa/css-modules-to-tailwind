@@ -6,12 +6,13 @@ This is a tool to convert css-modules to tailwind-css
   <img src="./logo.svg" alt="Tailwind Tool">
 </p>
 <p>
-    <a href="https://www.npmjs.com/package/css-modules-to-tailwind"><img src="https://img.shields.io/npm/dm/css-modules-to-tailwind?style=flat-square" alt="Total Downloads"></a>
-    <a href="https://www.npmjs.com/package/css-modules-to-tailwind"><img src="https://img.shields.io/bundlephobia/minzip/css-modules-to-tailwind?style=flat-square" alt="Latest Release"></a>
-    <a href="https://github.com/shiyangzhaoa/css-modules-to-tailwind/blob/main/LICENSE"><img src="https://shields.io/github/license/shiyangzhaoa/css-modules-to-tailwind?style=flat-square" alt="License"></a>
+  <a href="https://www.npmjs.com/package/css-modules-to-tailwind"><img src="https://img.shields.io/npm/dm/css-modules-to-tailwind?style=flat-square" alt="Total Downloads"></a>
+  <a href="https://www.npmjs.com/package/css-modules-to-tailwind"><img src="https://img.shields.io/bundlephobia/minzip/css-modules-to-tailwind?style=flat-square" alt="Latest Release"></a>
+  <a href="https://github.com/shiyangzhaoa/css-modules-to-tailwind/blob/main/LICENSE"><img src="https://shields.io/github/license/shiyangzhaoa/css-modules-to-tailwind?style=flat-square" alt="License"></a>
 </p>
 
 ## Support list
+
 - [x] tsconfig.json alias support, like `alias/component/index.module.css`
 - [x] css file circular reference
 - [x] project level support, just run this command: `npx css-modules-to-tailwind src/**/*.tsx`
@@ -19,142 +20,108 @@ This is a tool to convert css-modules to tailwind-css
 
 ## About
 
-  - [CSS Modules](https://github.com/css-modules/css-modules)
-  - [Tailwind CSS](https://tailwindcss.com/)
+- [CSS Modules](https://github.com/css-modules/css-modules)
+- [Tailwind CSS](https://tailwindcss.com/)
 
-## How it works
+## Install
 
-It uses [jscodeshift](https://github.com/facebook/jscodeshift) and [postcss](https://github.com/postcss/postcss).
-
-If you have a component named 'User'(src/index.tsx):
-```tsx
-import style form 'index.module.css';
-
-const User = () => (
-  <div className={style.header}>
-    <div className={style.user}>
-      <img className={style.avatar} src={creator.avatar} alt="avatar" />
-      <span className={style.username}>{creator.username}</span>
-    </div>
-    <div className={style.channelName}>{channel.name}</div>
-  </div>
-);
-```
-And used css-modules:
-```css
-.header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.user {
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-}
-
-.avatar {
-  width: 0.625rem;
-  height: 0.625rem;
-}
-
-.username {
-  font-size: 0.75rem;
-  line-height: 1rem;
-  color: #7DD3FC;
-  margin-left: 0.25rem;
-}
-```
-
-To install the stable version:
+Global install:
 
   ```shell
   npm install css-modules-to-tailwind -g
   ```
 
-Or use directly:
+Or use `npx`:
 
   ```shell
   npx css-modules-to-tailwind src/index.tsx
   // npx css-modules-to-tailwind src/**/*.tsx
   ```
 
-Tool will check your git directory is clean, you can use '--force' to skip the check.
+It will check your git directory is clean, you can use '--force' to skip the check.
 
-When you're done, in your index.tsx:
+## How it works
 
-```tsx
-import style form 'index.module.css';
+It uses [jscodeshift](https://github.com/facebook/jscodeshift) and [postcss](https://github.com/postcss/postcss).
 
-const User = () => (
-  <div className={`${style.header} items-center flex justify-between w-full`}>
-    <div className={`${style.user} items-center flex font-bold`}>
-      <img className={`${style.avatar} h-2.5 w-2.5`} src={creator.avatar} alt="avatar" />
-      <span className={`${style.username} text-sky-300 text-xs ml-1`}>{creator.username}</span>
-    </div>
-    <div className={style.channelName}>{channel.name}</div>
-  </div>
-);
-```
+Try it yourself:
 
-Your css file:
+1. First, Create a new jsx/tsx file(index.tsx/jsx):
 
-```css
-// index.module.css
-// no more content
-```
+   ```tsx
+   import React from 'react';
+   import style from './index.module.css';
 
-> why not delete index.module.css? Because it's dangerous...There may be other places that still depend on it.
+   export const User = () => (
+     <div className={style.header}>
+       <div className={style.user}>
+         <img className={style.avatar} alt="avatar" />
+         <span className={style.username}>username</span>
+       </div>
+       <div className={style.channelName}>name</div>
+     </div>
+   );
+   ```
 
-You might question if I have custom style in css file, like:
+2. Create a new css modules file:
 
-```css
-.selector1 {
-  width: 1111px;
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
+   ```css
+   .header {
+     width: 100%;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+   }
+ 
+   .user {
+     display: flex;
+     align-items: center;
+     font-weight: bold;
+   }
 
-.selector2 :global .global-class {
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
+   .avatar {
+     width: 0.625rem;
+     height: 0.625rem;
+   }
 
-.selector2 {
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
+   .username {
+     font-size: 0.75rem;
+     line-height: 1rem;
+     color: #7DD3FC;
+     margin-left: 0.25rem;
+   }
+   ```
 
-.fuck {
-  composes: selector2;
-}
-```
+3. Use this tool now:
 
-Of course, we won't delete it, it's going to look like this:
+   ```shell
+   npx css-modules-to-tailwind index.tsx
+   ```
 
-```css
-.selector1 {
-  width: 1111px;
-}
+4. You will get:
 
-.selector2 :global .global-class {
-  @apply text-xs;
-}
+   ```ts
+   // index.tsx
+   import React from 'react';
 
-.selector2 {
-  @apply text-xs;
-}
+   export const User = () => (
+     <div className='items-center flex justify-between w-full'>
+       <div className='items-center flex font-bold'>
+         <img className='h-2.5 w-2.5' alt="avatar" />
+         <span className='text-sky-300 text-xs ml-1'>username</span>
+       </div>
+       <div className={'invalid-class'}>name</div>
+     </div>
+   );
+   ```
 
-.fuck {
-  composes: selector2;
-}
-```
+   > If the css file content is empty, import specifiers and css files will be removed, unused class will be replaced with 'invalid-class'.
+
+🙋‍♂️ Flat and single structure design makes this tool work better.
 
 ## Only css-modules?
 
-Of course not.It can also be used for less/scss modules, but it doesn't work very well, like:
+Of course not. It can also be used for less/scss modules, but it doesn't work very well, like:
 
 ```less
 .selector1 {
@@ -195,6 +162,7 @@ const User = () => (
   </>
 );
 ```
+
 ```css
 .parentA {
   .childrenA {
@@ -202,6 +170,7 @@ const User = () => (
   }
 }
 ```
+
 You shouldn't use nesting as namespace.
 
 ### You should not write multiple/conflicting declarations in a selector
@@ -216,6 +185,7 @@ const User = () => (
   </>
 );
 ```
+
 ```css
 .cls1 {
   margin-left: 0.5rem;
@@ -227,19 +197,121 @@ const User = () => (
   display: block
 }
 ```
-Always, it will become like this:
-```tsx
-import style form 'index.module.css';
 
+Always, it will become like this:
+
+```tsx
 const User = () => (
   <>
-    <div className={clsx(`${style.cls1} hidden ml-2`, `${style.cls2} block ml-1.5`)}></div>
+    <div className={clsx('hidden ml-2', 'block ml-1.5')}></div>
   </>
 );
 ```
 
 I mean, in tailwind, "`ml-2 ml-1.5`" === "`ml-2`", but in your code, is the latter declaration overriding the former.
 
+## Support detail
+
+### Composes
+
+1. Quote itself
+
+   ```css
+   .class1 {
+     display: flex;
+   }
+
+   .class2 {
+     compose: class1
+   }
+   ```
+
+   it just becomes:
+
+   ```css
+   .class1 {
+     @apply flex;
+   }
+
+   .class2 {
+     composes: class1
+   }
+   ```
+
+2. Other CSS file:
+
+   ```css
+   /** index1.module.css */
+   .test1 {
+     display: flex;
+   }
+
+   /** index2.module.css */
+   .test2 {
+     composes: test1 from './index1.module.css'
+   }
+   ```
+
+   `index1.module.css` will be removed, and `index2.module.css`:
+
+   ```css
+   .test2 {
+     @apply flex;
+   }
+   ```
+
+### Multiple states
+
+For example:
+
+```css
+.button {
+  width: 1.25rem; /* 20px */
+}
+
+.box .button {
+  width: 2rem; /* 32px */
+}
+```
+
+It just becomes:
+
+```css
+.button {
+  @apply w-5; /* 20px */
+}
+
+.box .button {
+  @apply w-8; /* 32px */
+}
+```
+
+Classes with multiple states will not do too much processing, because I don't know if there is a conflict between the states.
+
+### Permutations
+
+Multiple style declarations can form a Tailwind CSS class. For example:
+
+```css
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+```
+
+```tsx
+const Com = () => <div className={style.truncate}>text</div>
+```
+
+It will become:
+
+```tsx
+const Com = () => <div className='truncate'>text</div>
+```
+
+Of course, it supports more complex permutations and combinations, you can try it.
+
 ## Do i have to use tailwind-css?
 
-I don't think so, I use it just because I like it.
+I think it's very useful, you can try it

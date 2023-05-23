@@ -62,4 +62,5 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Remove legacy className
-- Remove unused css import specifier
+- Remove unused css import specifiers and files
+- Update README.md
