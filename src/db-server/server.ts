@@ -7,6 +7,7 @@ import { config } from './config';
 import { extractMessage, formatMessage } from './utils';
 
 import type { RequestMessage, ResponseMessage } from './config';
+import { Apply } from '../context';
 
 const tcp = net.createServer((socket) => {
   socket.on('data', (chunk) => {
@@ -34,7 +35,7 @@ async function perform(
     socket.write(formatMessage(message, Buffer.byteLength), 'utf-8');
   };
 
-  const createResponse = (data: Record<string, any>) => {
+  const createResponse = (data: Apply | null = null) => {
     return {
       seq,
       event,
@@ -42,6 +43,7 @@ async function perform(
       success: true,
       body: {
         data,
+        message: 'success',
       },
     } as const;
   };
@@ -53,15 +55,15 @@ async function perform(
       break;
     case 'write':
       await db.write(body.key, body.value);
-      send(createResponse({}));
+      send(createResponse());
       break;
     case 'init':
       db.init();
-      send(createResponse({}));
+      send(createResponse());
       break;
     case 'destroy':
       db.destroy();
-      send(createResponse({}));
+      send(createResponse());
       break;
     default:
       send({
@@ -70,6 +72,7 @@ async function perform(
         type: 'response',
         success: false,
         body: {
+          data: null,
           message: 'invalid event',
         },
       });

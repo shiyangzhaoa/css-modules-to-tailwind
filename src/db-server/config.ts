@@ -1,3 +1,5 @@
+import { Apply } from "../context";
+
 export const config = {
   port: 7879,
 };
@@ -9,7 +11,7 @@ export interface ResponseMessage {
   success: boolean;
   body: {
     message?: string;
-    data?: Record<string, any>;
+    data: Apply | null;
   };
 }
 
@@ -28,7 +30,7 @@ export type RequestMessage =
       event: 'write';
       body: {
         key: string;
-        value: Record<string, any>;
+        value: Apply;
       };
     }
   | {
@@ -43,11 +45,11 @@ export type RequestMessage =
       seq: number;
       type: 'request';
       event: 'destroy';
-      body: Record<string, any>;
+      body: null;
     }
   | {
       seq: number;
       type: 'request';
       event: 'init';
-      body: Record<string, any>;
+      body: null;
     };

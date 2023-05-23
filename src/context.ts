@@ -5,7 +5,11 @@ import { config } from './db-server/config';
 
 import type { RequestMessage, ResponseMessage } from './db-server/config';
 
-export type Apply = Record<string, string[]>;
+export type Apply = {
+  result: Record<string, string[]>;
+  removed: string[];
+  isUnlinked?: boolean;
+};
 
 const events = new EventEmitter();
 let seq = 0;
@@ -35,7 +39,7 @@ const createMessage = <T = any>(message: RequestMessage): Promise<T> => {
   });
 };
 
-export const getContext = async (key: string) => {
+export const getContext = async (key: string): Promise<Apply> => {
   seq++;
 
   return createMessage({

@@ -1,7 +1,7 @@
 import path from 'path';
 
-import { AtRule } from 'postcss';
 import Tokenizer from 'css-selector-tokenizer';
+import { AtRule } from 'postcss';
 
 import { cssToTailwind } from '../index';
 import { setContext } from '../../context';
@@ -12,13 +12,15 @@ import {
   getTailwindBy,
 } from '../converters';
 
-import type { Plugin, Declaration, Rule, Root } from 'postcss';
+import type { Plugin, Declaration, Rule, Root, ChildNode } from 'postcss';
+import { isRule } from '../../utils/validate';
+import { getCompletionEntries } from '../../utils/file';
 
-export const tailwindPluginCreator: (cacheKey: string) => Plugin = (
-  cacheKey,
-) => ({
+export const tailwindPluginCreator = (
+  cssPath: string
+): Plugin => ({
   postcssPlugin: 'tailwind',
-  async Root(root) {
+  async Once(root) {
     const dependencies: string[] = [];
     const polymorphisms: string[] = [];
     const map = new Map();
@@ -87,12 +89,27 @@ export const tailwindPluginCreator: (cacheKey: string) => Plugin = (
       Object.assign(result, ruleTransformResult);
     });
 
-    await setContext(cacheKey, result);
+    const removedClassnames: string[] = [];
+
+    (function pick() {
+      const removed = checkRuleValid(root.nodes);
+
+      if (removed.length !== 0) {
+        removedClassnames.push(...removed.filter((item) => !polymorphisms.includes(item)));
+
+        pick();
+      }
+    })()
+
+    await setContext(cssPath, {
+      result: result,
+      removed: removedClassnames,
+    });
 
     const promises: (() => Promise<any>)[] = [];
     root.walkDecls((decl) => {
       if (decl.prop === 'composes') {
-        promises.push(() => convertComposes(decl));
+        promises.push(() => convertComposes(decl, cssPath));
       }
     });
 
@@ -115,7 +132,6 @@ const transformRule = (
     isGlobalParent = false,
   ) {
     let isGlobalClass = isGlobalParent;
-    checkRuleValid(rule);
 
     const rules = rule.nodes.filter((node) => node.type === 'rule') as Rule[];
     let selectors: string[] = [];
@@ -137,25 +153,8 @@ const transformRule = (
       ) {
         isGlobalClass = true;
 
-        const index = nodes.findIndex(
-          (node) => node.type === 'pseudo-class' && node.name === 'global',
-        );
-        nodes.forEach((node, i) => {
-          if (node.type === 'class' && i < index) {
-            const validName = node.name;
-            node.name = validName;
-          }
-        });
-
         return;
       }
-
-      nodes.forEach((node) => {
-        if (node.type === 'class') {
-          const validName = node.name;
-          node.name = validName;
-        }
-      });
 
       const allClassNode = nodes.filter((node) => node.type === 'class');
 
@@ -164,8 +163,6 @@ const transformRule = (
         selectors = [...selectors, validClass.name];
       }
     });
-
-    rule.selector = Tokenizer.stringify(selectorNodes);
 
     const singleRule: Record<string, string> = {};
     decls.forEach(({ prop, value, important }) => {
@@ -241,8 +238,6 @@ const transformRule = (
       node.remove();
     });
 
-    checkRuleValid(rule);
-
     rules.forEach((rule) => {
       dfs(rule, isUnnecessarySplit, isGlobalClass);
     });
@@ -251,20 +246,56 @@ const transformRule = (
   return result;
 };
 
-const checkRuleValid = (rule: Rule) => {
-  if (!rule) return;
+const checkRuleValid = (nodes: ChildNode[], result: string[] = [], isGlobalParent = false): string[] => {
+  let isGlobalClass = isGlobalParent;
+  
+  return [
+    ...result,
+    ...[...nodes].reduce((acc, node) => {
+      if (isRule(node)) {
+        let className = '';
+        const validNodes = node.nodes.filter((node) => node.type !== 'comment');
 
-  const validNodes = rule.nodes.filter((node) => node.type !== 'comment');
+        const selectorNodes = Tokenizer.parse(node.selector);
 
-  if (validNodes.length === 0) {
-    const parent = rule.parent;
-    rule.remove();
+        selectorNodes.nodes.forEach((node) => {
+          const { nodes } = node;
+      
+          if (isGlobalParent) return;
+          if (
+            nodes.find(
+              (node) => node.type === 'pseudo-class' && node.name === 'global',
+            )
+          ) {
+            isGlobalClass = true;
+      
+            return;
+          }
+      
+          const allClassNode = nodes.filter((node) => node.type === 'class');
+      
+          if (allClassNode.length !== 0) {
+            const validClass = allClassNode[allClassNode.length - 1] as any;
+            className = validClass.name;
+          }
+        });
+  
+        if (validNodes.length === 0) {
+          node.remove();
 
-    parent && parent.type === 'rule' && checkRuleValid(parent as Rule);
-  }
+  
+          return !isGlobalClass && className ? [...acc, className] : acc;
+        } else {
+          return checkRuleValid(validNodes, acc, isGlobalClass);
+        }
+      } else {
+        return acc;
+      }
+    }, [] as string[])
+  ];
 };
 
-async function convertComposes(decl: Declaration) {
+async function convertComposes(decl: Declaration, cssPath: string) {
   const { value } = decl;
 
   const result = getComposesValue(value);
@@ -277,17 +308,18 @@ async function convertComposes(decl: Declaration) {
 
   const [, className, stylePath] = result;
 
-  const styleAbsolutePath = path.resolve(stylePath);
+  const cssDir = path.dirname(cssPath);
+  const realPath = getCompletionEntries(cssDir)(stylePath);
 
-  const tailWindMap = await cssToTailwind(styleAbsolutePath);
+  const tailWindMap = await cssToTailwind(realPath);
 
-  if (tailWindMap && tailWindMap[className]) {
+  if (tailWindMap && tailWindMap.result[className]) {
     const parent = decl.parent;
     if (parent && parent.type === 'rule') {
       const atRules = parent.nodes.find(
         (node) => node.type === 'atrule' && node.name === 'apply',
       ) as AtRule;
-      const applyList = tailWindMap[className];
+      const applyList = tailWindMap.result[className];
 
       if (atRules) {
         const validApply = [
@@ -303,5 +335,9 @@ async function convertComposes(decl: Declaration) {
         parent.prepend(applyDecl);
       }
     }
+  }
+
+  if (tailWindMap.isUnlinked || tailWindMap.removed.includes(className)) {
+    decl.remove();
   }
 }

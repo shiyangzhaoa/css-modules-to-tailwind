@@ -4,10 +4,14 @@ import path from 'path';
 import { info } from './logger';
 
 import { readJson } from './file';
+import type { Apply } from '../context';
+
 interface Queen {
   resolve: (val: any) => void;
   promise: () => Promise<any>;
 }
+
+type DBData = Record<string, Apply>
 
 function noop() {
   //
@@ -25,7 +29,7 @@ export class DB {
   }
 
   get database() {
-    return readJson(this.#path);
+    return readJson(this.#path) as DBData;
   }
 
   async #run() {
@@ -72,7 +76,7 @@ export class DB {
 
     task.promise = promiseCreator;
 
-    const promise = new Promise<Record<string, any>>((resolve) => {
+    const promise = new Promise<Apply>((resolve) => {
       task.resolve = resolve;
     });
 
@@ -83,7 +87,7 @@ export class DB {
     return data;
   }
 
-  async write(cacheKey: string, data: Record<string, any>) {
+  async write(cacheKey: string, data: Apply) {
     const task: Queen = {
       resolve: noop,
       promise: () => Promise.resolve(),
@@ -92,11 +96,15 @@ export class DB {
       const json = this.database;
 
       if (!json[cacheKey]) {
-        json[cacheKey] = {};
+        json[cacheKey] = {
+          result: {},
+          removed: data.removed,
+          isUnlinked: data.isUnlinked || false,
+        };
       }
 
-      Object.entries(data).forEach(([key, value]) => {
-        Object.assign(json[cacheKey], { [key]: [...new Set(value)] });
+      Object.entries(data.result).forEach(([key, value]) => {
+        Object.assign(json[cacheKey].result, { [key]: [...new Set(value)] });
       });
 
       fs.writeFileSync(this.#path, JSON.stringify(json));
