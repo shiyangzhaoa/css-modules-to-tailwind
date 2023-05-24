@@ -91,13 +91,13 @@ export const tailwindPluginCreator = (
 
     const removedClassnames: string[] = [];
 
-    (function pick() {
-      const removed = checkRuleValid(root.nodes);
+    (function picking() {
+      const removed = treeShaking(root);
 
       if (removed.length !== 0) {
         removedClassnames.push(...removed.filter((item) => !polymorphisms.includes(item)));
 
-        pick();
+        picking();
       }
     })()
 
@@ -246,7 +246,35 @@ const transformRule = (
   return result;
 };
 
-const checkRuleValid = (nodes: ChildNode[], result: string[] = [], isGlobalParent = false): string[] => {
+const treeShaking = (root: Root) => {
+  const multiple = getMultipleClass(root);
+
+  return shaking(root.nodes, multiple);
+};
+
+const getMultipleClass = (root: Root) => {
+  const map = new Map<string, boolean>();
+  const result: string[] = [];
+
+  root.walkRules((rule) => {
+    const selectorNodes = Tokenizer.parse(rule.selector);
+    selectorNodes.nodes.forEach((node) =>
+      node.nodes.forEach((node) => {
+        if (node.type === 'class') {
+          if (map.has(node.name)) {
+            result.push(node.name);
+          }
+
+          map.set(node.name, true);
+        }
+      }),
+    );
+  });
+
+  return [...new Set(result)]
+};
+
+const shaking = (nodes: ChildNode[], multiple: string[], result: string[] = [], isGlobalParent = false): string[] => {
   let isGlobalClass = isGlobalParent;
   
   return [
@@ -283,11 +311,14 @@ const checkRuleValid = (nodes: ChildNode[], result: string[] = [], isGlobalParen
         if (validNodes.length === 0) {
           node.remove();
 
-  
-          return !isGlobalClass && className ? [...acc, className] : acc;
-        } else {
-          return checkRuleValid(validNodes, acc, isGlobalClass);
+          if (!isGlobalClass && className && !multiple.includes(className)) {
+            return [...acc, className];
+          }
+
+          return acc;
         }
+
+        return shaking(validNodes, multiple, acc, isGlobalClass);
       } else {
         return acc;
       }
