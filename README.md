@@ -110,12 +110,12 @@ Try it yourself:
          <img className='h-2.5 w-2.5' alt="avatar" />
          <span className='text-sky-300 text-xs ml-1'>username</span>
        </div>
-       <div className={'invalid-class'}>name</div>
+       <div className={` `}>name</div>
      </div>
    );
    ```
 
-   > If the css file content is empty, import specifiers and css files will be removed, unused class will be replaced with 'invalid-class'.
+   > If the css file content is empty, import specifiers and css files will be removed, unused class will be replaced with \` \`, You should search globally for \` \`, then delete them.
 
 🙋‍♂️ Flat and single structure design makes this tool work better.
 

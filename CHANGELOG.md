@@ -70,3 +70,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Keep useful `className`
+
+## 0.2.1
+
+### Fixed
+
+- Fix `className` substitution rules
