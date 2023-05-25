@@ -80,12 +80,14 @@ export const fillTailwindClass = (
 
             return;
           }
-        }
 
-        if (isUnlinked) {
-          styleMemberExpression.replace(j.literal('invalid-class'));
+          try {
+            styleMemberExpression.replace(j.literal(className));
 
-          return;
+            return;
+          } catch {
+            //
+          }
         }
 
         const quasis = [
@@ -95,7 +97,8 @@ export const fillTailwindClass = (
             true,
           ),
         ];
-        const expressions = [
+
+        const expressions = (isUnlinked || isRemoved) ? [] : [
           j.memberExpression(
             j.identifier(object.name),
             j.identifier(validName),
