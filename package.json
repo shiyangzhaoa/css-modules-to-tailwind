@@ -1,6 +1,6 @@
 {
   "name": "css-modules-to-tailwind",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "tailwind css convert tool",
   "contributors": [
     "shiyangzhaoa"
