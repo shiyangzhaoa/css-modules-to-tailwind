@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -5,7 +6,7 @@ import puppeteer from 'puppeteer';
 import postcss from 'postcss';
 import chalk from 'chalk';
 
-import type { Declaration, ChildNode, AtRule } from 'postcss';
+import type { Declaration, ChildNode } from 'postcss';
 
 const validList = [
   'Layout',
@@ -89,17 +90,17 @@ const BASE_URL = 'https://tailwindcss.com';
       console.log(chalk.green(`${url} opened`));
 
       const heads = await page.$$('thead > tr > th');
-      let classIndex = 0;
-      let propsIndex = 0;
+      let classIndex: number;
+      let propsIndex: number;
 
       await Promise.all(heads.map((ele, index) => {
         return (async () => {
           const text = await (await ele.getProperty('textContent')).jsonValue();
 
-          if (text === 'Class') {
+          if (text === 'Class' && classIndex === undefined) {
             classIndex = index;
           }
-          if (text === 'Properties') {
+          if (text === 'Properties' && propsIndex === undefined) {
             propsIndex= index;
           }
         })();
@@ -136,9 +137,9 @@ const BASE_URL = 'https://tailwindcss.com';
               (node) => node.type === 'decl',
             ) as Declaration[];
             // TODO: useful?
-            const atrules = (ast.nodes as ChildNode[]).filter(
-              (node) => node.type === 'atrule',
-            ) as AtRule[];
+            // const atrules = (ast.nodes as ChildNode[]).filter(
+            //   (node) => node.type === 'atrule',
+            // ) as AtRule[];
 
             const rule: Record<string, string> = {};
             decls.forEach(decl => {

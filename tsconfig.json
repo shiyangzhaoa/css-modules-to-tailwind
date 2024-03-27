@@ -6,7 +6,6 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "target": "ES2021",
-    "charset": "utf8",
     "newLine": "LF",
     "assumeChangesOnlyAffectDirectDependencies": true,
     "declaration": true,
