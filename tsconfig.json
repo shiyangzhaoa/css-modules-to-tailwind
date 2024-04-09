@@ -1,12 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["src", "src/**/*.json"],
+  "include": ["src"],
   "compilerOptions": {
     "strict": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "target": "ES2021",
-    "charset": "utf8",
     "newLine": "LF",
     "assumeChangesOnlyAffectDirectDependencies": true,
     "declaration": true,

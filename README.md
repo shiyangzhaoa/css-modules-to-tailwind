@@ -16,6 +16,7 @@ This is a tool to convert css-modules to tailwind-css
 - [x] tsconfig.json alias support, like `alias/component/index.module.css`
 - [x] css file circular reference
 - [x] project level support, just run this command: `npx css-modules-to-tailwind src/**/*.tsx`
+- [x] arbitrary values support, `margin: 15px` => `m-[15px]`
 - [ ] pseudo-classes support
 
 ## About

@@ -17,7 +17,7 @@ const transform = async (fileInfo: core.FileInfo) => {
 
   fillTailwindClass(ast, tailwindMap);
 
-  return ast.toSource({ quote: 'single' });
+  return ast.toSource({ quote: 'double' });
 };
 
 export default transform;

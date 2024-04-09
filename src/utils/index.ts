@@ -13,6 +13,7 @@ export const send = (message: RequestMessage | ResponseMessage) => {
 export const clearInvalidSuffix = (val: string) =>
   val.replaceAll(/\.tsx?$/g, '');
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const promiseStep = <T = any>(
   promises: (() => Promise<T>)[],
 ): Promise<T[]> => {
