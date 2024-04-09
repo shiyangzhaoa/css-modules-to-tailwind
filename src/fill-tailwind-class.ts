@@ -62,7 +62,7 @@ export const fillTailwindClass = (
 
           // className={`${style.test} aa bb cc`}
           if (j.TemplateLiteral.check(parent.value)) {
-            j(parent).replaceWith(j.literal(className));
+            styleMemberExpression.replace(j.literal(className));
 
             return;
           }
@@ -110,5 +110,5 @@ export const fillTailwindClass = (
     });
   }
 
-  return ast.toSource({ quote: 'single' });
+  return ast.toSource({ quote: "double" });
 };

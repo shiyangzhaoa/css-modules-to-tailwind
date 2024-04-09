@@ -1,6 +1,6 @@
 {
   "name": "css-modules-to-tailwind",
-  "version": "0.2.2-beta.1",
+  "version": "0.3.0",
   "description": "tailwind css convert tool",
   "contributors": [
     "shiyangzhaoa"
@@ -29,7 +29,8 @@
     "jscodeshift": "^0.13.1",
     "postcss": "^8.4.16",
     "postcss-less": "^6.0.0",
-    "postcss-scss": "^4.0.5"
+    "postcss-scss": "^4.0.5",
+    "tailwind-generator": "0.0.1-beta.5"
   },
   "devDependencies": {
     "@types/color": "^3.0.3",

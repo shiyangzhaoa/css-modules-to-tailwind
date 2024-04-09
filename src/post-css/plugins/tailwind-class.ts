@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import path from 'path';
 
 import Tokenizer from 'css-selector-tokenizer';
@@ -6,15 +7,13 @@ import { AtRule } from 'postcss';
 import { cssToTailwind } from '../index';
 import { setContext } from '../../context';
 import { getComposesValue, promiseStep } from '../../utils';
-import {
-  processValue,
-  processProps,
-  getTailwindBy,
-} from '../converters';
 
 import type { Plugin, Declaration, Rule, Root, ChildNode } from 'postcss';
 import { isRule } from '../../utils/validate';
 import { getCompletionEntries } from '../../utils/file';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { gen } = require('tailwind-generator');
 
 export const tailwindPluginCreator = (
   cssPath: string
@@ -166,14 +165,14 @@ const transformRule = (
 
     const singleRule: Record<string, string> = {};
     decls.forEach(({ prop, value, important }) => {
-      const invalidValue = String(processValue(prop, value));
-      const invalidProp = processProps(prop, value);
       if (!important) {
-        singleRule[invalidProp] = invalidValue;
+        singleRule[prop] = value;
       }
     });
-    const { tailwind: applyListStr, useful } = getTailwindBy(singleRule);
-    const applyList = decls.filter(node => !useful[processProps(node.prop, node.value)] && !node.important);
+    const { success, failed } = gen(singleRule);
+
+    const applyListStr = success.split(' ');
+    const applyList = decls.filter(node => !failed.includes(node.prop) && !node.important);
 
     let isUnnecessarySplit = isParentUnnecessarySplit;
     if (isUnnecessarySplit === false) {

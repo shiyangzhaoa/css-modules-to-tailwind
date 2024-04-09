@@ -69,9 +69,9 @@ export const getTailwindMap = async (
         }
       });
     } catch (err) {
-      error(err as any);
+      error(String(err));
     }
   }
 
-  return [ast.toSource({ quote: 'single' }), map] as const;
+  return [ast.toSource({ quote: "double" }), map] as const;
 };

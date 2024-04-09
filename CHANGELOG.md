@@ -76,3 +76,13 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Fix `className` substitution rules
+
+## 0.3.0
+
+### Added
+
+- 🧪 new tailwind css classes generator
+
+### Fixed
+
+- 🔧 sorter rules
