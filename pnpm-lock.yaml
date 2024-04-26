@@ -9,8 +9,8 @@ dependencies:
     specifier: ^4.2.3
     version: 4.2.3
   commander:
-    specifier: ^9.4.0
-    version: 9.5.0
+    specifier: ^12.0.0
+    version: 12.0.0
   css-selector-tokenizer:
     specifier: ^0.8.0
     version: 0.8.0
@@ -2647,9 +2647,9 @@ packages:
       color-string: 1.9.1
     dev: false
 
-  /commander@9.5.0:
-    resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
-    engines: {node: ^12.20.0 || >=14}
+  /commander@12.0.0:
+    resolution: {integrity: sha512-MwVNWlYjDTtOjX5PiD7o5pK0UrFU/OYgcJfjjK4RaHZETNtjJqrZa9Y9ds88+A+f+d5lv+561eZ+yCKoS3gbAA==}
+    engines: {node: '>=18'}
     dev: false
 
   /commondir@1.0.1:
