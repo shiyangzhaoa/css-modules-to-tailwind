@@ -46,7 +46,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
     "jest": "28.1.2",
-    "jest-watch-typeahead": "1.1.0",
+    "jest-watch-typeahead": "2.2.2",
     "node-notifier": "^10.0.1",
     "prettier": "^3.2.5",
     "puppeteer": "^17.1.3",
