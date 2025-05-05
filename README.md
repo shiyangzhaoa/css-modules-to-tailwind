@@ -18,6 +18,7 @@ This is a tool to convert css-modules to tailwind-css
 - [x] project level support, just run this command: `npx css-modules-to-tailwind src/**/*.tsx`
 - [x] arbitrary values support, `margin: 15px` => `m-[15px]`
 - [ ] pseudo-classes support
+- [x] tailwind prefixes support, e.g. `tw:`
 
 ## About
 
@@ -312,6 +313,26 @@ const Com = () => <div className='truncate'>text</div>
 ```
 
 Of course, it supports more complex permutations and combinations, you can try it.
+
+### Tailwind Prefixes
+
+For example:
+
+```css
+.tw-bg-red-500 {
+  background-color: #f56565;
+}
+```
+
+```tsx
+const Com = () => <div className='tw-bg-red-500'>text</div>
+```
+
+It will become:
+
+```tsx
+const Com = () => <div className='tw-bg-red-500'>text</div>
+```
 
 ## Do i have to use tailwind-css?
 

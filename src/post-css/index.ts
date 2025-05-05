@@ -17,6 +17,15 @@ export const cssToTailwind = async (cssPath: string) => {
   const plugins: AcceptedPlugin[] = [
     tailwindPluginCreator(cssPath),
     // postcss-nested, if you want split nested
+    require('postcss-prefix-selector')({
+      prefix: 'tw:',
+      transform: (prefix, selector, prefixedSelector) => {
+        if (selector.startsWith(prefix)) {
+          return selector;
+        }
+        return prefixedSelector;
+      },
+    }),
   ];
 
   const processor = postcss(plugins);
