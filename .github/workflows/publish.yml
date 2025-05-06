@@ -11,16 +11,14 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
 
-      - name: Install PNPM
-        run: npm i -g pnpm
+      - uses: pnpm/action-setup@v4
 
       - name: Use Node LTS ✨
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
           registry-url: https://registry.npmjs.org
-
-      - uses: pnpm/action-setup@v4
+          cache: pnpm
 
       - name: Install dependencies 📦️
         run: pnpm install --frozen-lockfile
