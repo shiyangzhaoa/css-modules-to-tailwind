@@ -5,30 +5,29 @@ on:
     types: [published]
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout 🛎️
         uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
+      - name: Use Node LTS ✨
+        uses: actions/setup-node@v4
         with:
-          version: 8
-          run_install: false
-
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: ".nvmrc"
-          cache: pnpm
+          node-version: lts/*
           registry-url: https://registry.npmjs.org
 
-      - name: Install dependencies
+      - name: Install PNPM
+        run: npm i -g pnpm
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Install dependencies 📦️
         run: pnpm install --frozen-lockfile
 
-      - name: Publish 🚀
-        shell: bash
-        run: pnpm publish packages/components --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Build 🔨
+        run: pnpm build
+
+      - uses: simenandre/publish-with-pnpm@v2
+        with:
+          npm-auth-token: ${{ secrets.NPM_TOKEN }}
