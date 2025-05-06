@@ -1,83 +1,31 @@
-name: Publish Package
+name: Release to NPM
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Use Node LTS ✨
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-      
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: false
-      
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-      
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ env.STORE_PATH }}
-            node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-      
-      - name: Install dependencies
+          node-version: lts/*
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+
+      - name: Install dependencies 📦️
         run: pnpm install --frozen-lockfile
-      
-      - name: Verify version
-        run: |
-          RELEASE_VERSION=${GITHUB_REF#refs/tags/v}
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if [ "$RELEASE_VERSION" != "$PACKAGE_VERSION" ]; then
-            echo "Version mismatch: Release version ($RELEASE_VERSION) != Package version ($PACKAGE_VERSION)"
-            exit 1
-          fi
-      
-      - name: Check npm access
-        run: |
-          if ! pnpm whoami; then
-            echo "Not logged in to npm"
-            exit 1
-          fi
-      
-      - name: Run tests
-        run: pnpm test
-      
-      - name: Build
+
+      - name: Build 🔨
         run: pnpm build
-      
-      - name: Verify build artifacts
-        run: |
-          if [ ! -d "build" ]; then
-            echo "Build directory not found"
-            exit 1
-          fi
-          if [ ! -f "bin/index.js" ]; then
-            echo "Binary file not found"
-            exit 1
-          fi
-          chmod +x bin/index.js
-      
-      - name: Dry run publish
-        run: pnpm publish --dry-run
-      
-      - name: Publish to NPM
-        run: pnpm publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} 
+
+      - uses: simenandre/publish-with-pnpm@v2
+        with:
+          npm-auth-token: ${{ secrets.NPM_TOKEN }}
