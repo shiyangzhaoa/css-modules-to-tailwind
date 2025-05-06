@@ -15,12 +15,10 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-          cache: 'pnpm'
       
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+        run: |
+          npm install -g pnpm
       
       - name: Get pnpm store directory
         shell: bash
