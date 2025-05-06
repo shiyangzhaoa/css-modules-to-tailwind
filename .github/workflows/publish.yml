@@ -16,9 +16,10 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
       
-      - name: Install pnpm
-        run: |
-          npm install -g pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
       
       - name: Get pnpm store directory
         shell: bash
@@ -45,18 +46,32 @@ jobs:
             exit 1
           fi
       
+      - name: Check npm access
+        run: |
+          if ! pnpm whoami; then
+            echo "Not logged in to npm"
+            exit 1
+          fi
+      
       - name: Run tests
         run: pnpm test
       
       - name: Build
         run: pnpm build
       
-      - name: Verify build
+      - name: Verify build artifacts
         run: |
           if [ ! -d "build" ]; then
             echo "Build directory not found"
             exit 1
           fi
+          if [ ! -f "bin/index.js" ]; then
+            echo "Binary file not found"
+            exit 1
+          fi
+      
+      - name: Dry run publish
+        run: pnpm publish --dry-run
       
       - name: Publish to NPM
         run: pnpm publish --no-git-checks
