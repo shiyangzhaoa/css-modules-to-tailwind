@@ -328,10 +328,14 @@ For example:
 const Com = () => <div className='tw-bg-red-500'>text</div>
 ```
 
+```
+npx css-modules-to-tailwind src/**/*.tsx --prefix=tw:
+```
+
 It will become:
 
 ```tsx
-const Com = () => <div className='tw-bg-red-500'>text</div>
+const Com = () => <div className='tw:bg-red-500'>text</div>
 ```
 
 ## Do i have to use tailwind-css?

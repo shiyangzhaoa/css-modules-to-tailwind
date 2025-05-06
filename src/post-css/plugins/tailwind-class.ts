@@ -16,7 +16,7 @@ import { getCompletionEntries } from '../../utils/file';
 const { gen } = require('tailwind-generator');
 
 export const tailwindPluginCreator = (
-  cssPath: string
+  cssPath: string,
 ): Plugin => ({
   postcssPlugin: 'tailwind',
   async Once(root) {

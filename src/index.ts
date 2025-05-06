@@ -18,7 +18,7 @@ program
   .argument('<dirs...>')
   .option('-n, --number <numbers...>', 'specify numbers')
   .option('-f, --force', 'skip check git status')
-  .option('-p, --prefix <prefix>', 'specify tailwind prefix', 'tw:')
+  .option('-p, --prefix <prefix>', 'specify tailwind prefix')
   .action((dirs, options) => {
     const args: string[] = [];
 
@@ -28,7 +28,9 @@ program
 
     args.push(path.join(__dirname, `./transform.js`));
     args.push(...dirs);
-    args.push(`--prefix=${options.prefix}`);
+    if (options.prefix) {
+      args.push(`--prefix=${options.prefix}`);
+    }
     const command = `${jscodeshiftExecutable} -t ${args.join(' ')}`;
     const [cmd, ...restArgs] = command.split(' ');
     const cp = spawn(cmd, restArgs, { stdio: 'pipe' });
