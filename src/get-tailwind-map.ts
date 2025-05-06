@@ -18,6 +18,7 @@ interface TransformCreate {
 export const getTailwindMap = async (
   ast: core.Collection<unknown>,
   dir: string,
+  prefix: string = 'tw:'
 ) => {
   const map: Record<string, Apply> = {};
 
@@ -55,7 +56,7 @@ export const getTailwindMap = async (
       promises.push({
         importDecl,
         key: importCSSName,
-        value: cssToTailwind(cssPath),
+        value: cssToTailwind(cssPath, prefix),
       });
     });
     try {
