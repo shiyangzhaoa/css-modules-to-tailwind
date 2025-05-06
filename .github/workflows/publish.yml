@@ -16,10 +16,11 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
       
+      - name: Enable corepack
+        run: corepack enable
+      
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
+        run: corepack prepare pnpm@latest --activate
       
       - name: Get pnpm store directory
         shell: bash
