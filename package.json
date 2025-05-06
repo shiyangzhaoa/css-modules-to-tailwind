@@ -6,7 +6,8 @@
     "shiyangzhaoa"
   ],
   "files": [
-    "build"
+    "build",
+    "bin"
   ],
   "license": "MIT",
   "main": "build/index.js",
