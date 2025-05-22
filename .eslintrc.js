@@ -9,5 +9,10 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module'
-  }
+  },
+  ignorePatterns: [
+    '*.test.ts',
+    '__tests__/',
+    '__testfixtures__/',
+  ],
 };

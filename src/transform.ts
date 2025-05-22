@@ -1,13 +1,13 @@
 import path from 'path';
 
-import core from 'jscodeshift';
+import core, { type API } from 'jscodeshift';
 
 import { j } from './jscodeshift';
 
 import { getTailwindMap } from './get-tailwind-map';
 import { fillTailwindClass } from './fill-tailwind-class';
 
-const transform = async (fileInfo: core.FileInfo) => {
+const transform = async (fileInfo: core.FileInfo, _: API, options: { prefix?: string }) => {
   const ast = j(fileInfo.source);
   const dir = path.dirname(fileInfo.path);
 
@@ -15,7 +15,7 @@ const transform = async (fileInfo: core.FileInfo) => {
 
   const tailwindMap = result[1];
 
-  fillTailwindClass(ast, tailwindMap);
+  fillTailwindClass(ast, tailwindMap, options.prefix);
 
   return ast.toSource({ quote: 'double' });
 };
