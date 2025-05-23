@@ -332,6 +332,8 @@ const Com = () => <div className='tw-bg-red-500'>text</div>
 npx css-modules-to-tailwind src/**/*.tsx --prefix=tw:
 ```
 
-## Do i have to use tailwind-css?
+It will become:
 
-I think it's very useful, you can try it
+```tsx
+const Com = () => <div className='tw:bg-red-500'>text</div>
+```
