@@ -11,11 +11,11 @@ const transform = async (fileInfo: core.FileInfo, _: API, options: { prefix?: st
   const ast = j(fileInfo.source);
   const dir = path.dirname(fileInfo.path);
 
-  const result = await getTailwindMap(ast, dir);
+  const result = await getTailwindMap(ast, dir, options?.prefix);
 
   const tailwindMap = result[1];
 
-  fillTailwindClass(ast, tailwindMap, options.prefix);
+  fillTailwindClass(ast, tailwindMap);
 
   return ast.toSource({ quote: 'double' });
 };

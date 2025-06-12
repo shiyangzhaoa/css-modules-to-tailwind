@@ -17,6 +17,7 @@ const { gen } = require('tailwind-generator');
 
 export const tailwindPluginCreator = (
   cssPath: string,
+  prefix: string | undefined
 ): Plugin => ({
   postcssPlugin: 'tailwind',
   async Once(root) {
@@ -42,7 +43,7 @@ export const tailwindPluginCreator = (
             }
             map.set(node.name, true);
           }
-        }),
+        })
       );
     });
 
@@ -74,6 +75,8 @@ export const tailwindPluginCreator = (
         node,
         dependencies,
         polymorphisms,
+        false,
+        prefix,
       );
       Object.assign(result, ruleTransformResult);
     });
@@ -84,6 +87,7 @@ export const tailwindPluginCreator = (
         dependencies,
         polymorphisms,
         true,
+        prefix,
       );
       Object.assign(result, ruleTransformResult);
     });
@@ -94,11 +98,13 @@ export const tailwindPluginCreator = (
       const removed = treeShaking(root);
 
       if (removed.length !== 0) {
-        removedClassnames.push(...removed.filter((item) => !polymorphisms.includes(item)));
+        removedClassnames.push(
+          ...removed.filter((item) => !polymorphisms.includes(item))
+        );
 
         picking();
       }
-    })()
+    })();
 
     await setContext(cssPath, {
       result: result,
@@ -108,7 +114,7 @@ export const tailwindPluginCreator = (
     const promises: (() => Promise<any>)[] = [];
     root.walkDecls((decl) => {
       if (decl.prop === 'composes') {
-        promises.push(() => convertComposes(decl, cssPath));
+        promises.push(() => convertComposes(decl, cssPath, prefix));
       }
     });
 
@@ -122,13 +128,14 @@ const transformRule = (
   rule: Rule,
   dependencies: string[],
   polymorphisms: string[],
-  isUnnecessarySplit = false,
+  isUnnecessarySplit: boolean,
+  prefix: string|undefined,
 ) => {
   const result = {};
   void (function dfs(
     rule: Rule,
     isParentUnnecessarySplit = isUnnecessarySplit,
-    isGlobalParent = false,
+    isGlobalParent = false
   ) {
     let isGlobalClass = isGlobalParent;
 
@@ -136,7 +143,7 @@ const transformRule = (
     let selectors: string[] = [];
 
     const decls = rule.nodes.filter(
-      (node) => node.type === 'decl',
+      (node) => node.type === 'decl'
     ) as Declaration[];
 
     const selectorNodes = Tokenizer.parse(rule.selector);
@@ -147,7 +154,7 @@ const transformRule = (
       if (isGlobalParent) return;
       if (
         nodes.find(
-          (node) => node.type === 'pseudo-class' && node.name === 'global',
+          (node) => node.type === 'pseudo-class' && node.name === 'global'
         )
       ) {
         isGlobalClass = true;
@@ -171,15 +178,18 @@ const transformRule = (
     });
     const { success, failed } = gen(singleRule);
 
-    const applyListStr = success.split(' ');
-    const applyList = decls.filter(node => !failed.includes(node.prop) && !node.important);
+    const twList: string[] = success.split(' ')
+    const applyListStr = prefix ? twList.map(cls => `${prefix}${cls}`) : twList;
+    const applyList = decls.filter(
+      (node) => !failed.includes(node.prop) && !node.important
+    );
 
     let isUnnecessarySplit = isParentUnnecessarySplit;
     if (isUnnecessarySplit === false) {
       isUnnecessarySplit = !selectorNodes.nodes.every((node) =>
         node.nodes.every((node) =>
-          ['class', 'invalid', 'spacing'].includes(node.type),
-        ),
+          ['class', 'invalid', 'spacing'].includes(node.type)
+        )
       );
     }
     if (isUnnecessarySplit === false) {
@@ -192,7 +202,7 @@ const transformRule = (
             dependencies.includes(node.name) ||
             polymorphisms.includes(node.name)
           );
-        }),
+        })
       );
     }
     if (isUnnecessarySplit === false) {
@@ -209,7 +219,7 @@ const transformRule = (
 
     if (isUnnecessarySplit) {
       const atRules = rule.nodes.find(
-        (node) => node.type === 'atrule' && node.name === 'apply',
+        (node) => node.type === 'atrule' && node.name === 'apply'
       ) as AtRule;
       if (atRules) {
         const validApply = [
@@ -266,16 +276,21 @@ const getMultipleClass = (root: Root) => {
 
           map.set(node.name, true);
         }
-      }),
+      })
     );
   });
 
-  return [...new Set(result)]
+  return [...new Set(result)];
 };
 
-const shaking = (nodes: ChildNode[], multiple: string[], result: string[] = [], isGlobalParent = false): string[] => {
+const shaking = (
+  nodes: ChildNode[],
+  multiple: string[],
+  result: string[] = [],
+  isGlobalParent = false
+): string[] => {
   let isGlobalClass = isGlobalParent;
-  
+
   return [
     ...result,
     ...[...nodes].reduce((acc, node) => {
@@ -287,26 +302,26 @@ const shaking = (nodes: ChildNode[], multiple: string[], result: string[] = [], 
 
         selectorNodes.nodes.forEach((node) => {
           const { nodes } = node;
-      
+
           if (isGlobalParent) return;
           if (
             nodes.find(
-              (node) => node.type === 'pseudo-class' && node.name === 'global',
+              (node) => node.type === 'pseudo-class' && node.name === 'global'
             )
           ) {
             isGlobalClass = true;
-      
+
             return;
           }
-      
+
           const allClassNode = nodes.filter((node) => node.type === 'class');
-      
+
           if (allClassNode.length !== 0) {
             const validClass = allClassNode[allClassNode.length - 1] as any;
             className = validClass.name;
           }
         });
-  
+
         if (validNodes.length === 0) {
           node.remove();
 
@@ -321,11 +336,15 @@ const shaking = (nodes: ChildNode[], multiple: string[], result: string[] = [], 
       } else {
         return acc;
       }
-    }, [] as string[])
+    }, [] as string[]),
   ];
 };
 
-async function convertComposes(decl: Declaration, cssPath: string) {
+async function convertComposes(
+  decl: Declaration,
+  cssPath: string,
+  prefix: string | undefined
+) {
   const { value } = decl;
 
   const result = getComposesValue(value);
@@ -341,13 +360,13 @@ async function convertComposes(decl: Declaration, cssPath: string) {
   const cssDir = path.dirname(cssPath);
   const realPath = getCompletionEntries(cssDir)(stylePath);
 
-  const tailWindMap = await cssToTailwind(realPath);
+  const tailWindMap = await cssToTailwind(realPath, prefix);
 
   if (tailWindMap && tailWindMap.result[className]) {
     const parent = decl.parent;
     if (parent && parent.type === 'rule') {
       const atRules = parent.nodes.find(
-        (node) => node.type === 'atrule' && node.name === 'apply',
+        (node) => node.type === 'atrule' && node.name === 'apply'
       ) as AtRule;
       const applyList = tailWindMap.result[className];
 

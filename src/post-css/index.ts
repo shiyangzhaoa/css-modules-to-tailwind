@@ -13,9 +13,9 @@ import { tailwindPluginCreator } from './plugins/tailwind-class';
 
 import type { AcceptedPlugin } from 'postcss';
 
-export const cssToTailwind = async (cssPath: string) => {
+export const cssToTailwind = async (cssPath: string, prefix: string | undefined) => {
   const plugins: AcceptedPlugin[] = [
-    tailwindPluginCreator(cssPath),
+    tailwindPluginCreator(cssPath, prefix),
     // postcss-nested, if you want split nested
   ];
 
