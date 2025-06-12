@@ -7,7 +7,6 @@ import type { Apply } from './context';
 export const fillTailwindClass = (
   ast: core.Collection<unknown>,
   tailwindMap: Record<string, Apply>,
-  prefix?: string
 ) => {
   const styleMemberExpressions = ast.find(
     j.MemberExpression,
@@ -42,7 +41,7 @@ export const fillTailwindClass = (
           return;
         }
 
-        const className = classList.map(cls => `${prefix ?? ''}${cls}`).join(' ');
+        const className = classList.join(' ');
 
         if (isRemoved) {
           const parent = styleMemberExpression.parent;
